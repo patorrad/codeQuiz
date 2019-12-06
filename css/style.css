@@ -1,0 +1,16 @@
+h1 {
+    font-size: xx-large;
+}
+
+#nav {
+    height: 60px;
+    width: auto;
+    background-color: grey;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+
