@@ -12,14 +12,16 @@
 //11. array for questions
 //12. function to change time
 //13. function to check array?
-
-var startButton = document.querySelector(".start-game");
+var highScores = document.querySelector("#highscores");
+var startButton = document.querySelector("#Start");
 var titleBox = document.querySelector("#title-box");
 var bodyBox = document.querySelector("#body-box");
 var timer = document.querySelector("#timer");
 var buttons = document.querySelector("#box2");
 var questionsBtn = document.querySelector("#btn-box");
 var inputBox = document.querySelector("#input-box");
+var formBox = document.querySelector("#form-box");
+var submitBox = document.querySelector("#submit-box");
 var questions = [
     {
       title: "Commonly used data types DO NOT include:",
@@ -40,11 +42,25 @@ var questions = [
 var timerInterval;
 
 var secondsLeft = 600; //100th seconds
-var penalty = 100; //seconds
+var penalty = 100; //100th seconds
 var index = 0; //Question Number
 renderTimeToPage();
 timer.style = "font-size: xx-large"
 
+
+function deleteText(element) {
+    element.textContent = '';
+}
+
+function renderText(element, text) {
+    element.textContent = text;
+}
+
+function createElement(type, element) {
+    var newEl = document.createElement(type);
+    element.appendChild(newEl);
+    return newEl;
+}
 function renderTimeToPage() {
     var time = secondsLeft / 10;
     timer.textContent = "Time: " + (secondsLeft % 10 === 0? time + ".0" : time);
@@ -52,16 +68,15 @@ function renderTimeToPage() {
 
 function renderQuestions() {
     titleBox.textContent = questions[index].title;
-    bodyBox.textContent = "";
+    deleteText(bodyBox);
 }
 
 function renderScore() {
-    titleBox.textContent = "Your score was " + (secondsLeft / 10).toFixed();
-    var inputB = document.createElement("input");
-    inputB.textContent = "adsf";
-    inputB.setAttribute("type", "text");
-    inputB.setAttribute("value", "Enter Name");
-    inputBox.appendChild(inputB);
+    return (secondsLeft / 10).toFixed();
+}
+
+function displayMessage(location, message) {
+    location.textContent = message;
 }
 
 function deleteButtons(element) {
@@ -77,6 +92,35 @@ function createButtons (btnChoices, parent) {
     }
 }
 
+function renderScorePage() {
+    titleBox.textContent = "Your score was " + renderScore();
+    bodyBox.textContent = "Enter your initials";
+    var inputB = document.createElement("input");
+    inputB.textContent = "adsf";
+    inputB.setAttribute("type", "text");
+    inputB.setAttribute("placeholder", "Enter Name");
+    inputB.setAttribute("id", "input-text");
+    formBox.appendChild(inputB);
+    var msg = document.createElement("p");
+    msg.textContent = " ";
+    msg.setAttribute("id", "message");
+    msg.setAttribute("style", "height: 15px; width: 200px");
+    submitBox.appendChild(msg);
+    var btn = document.createElement("button"); 
+    btn.textContent = "Submit"; 
+    btn.setAttribute("id", "scoreInput");                
+    submitBox.appendChild(btn); 
+    inputBox.setAttribute("style", "margin-bottom: 2vw");
+}
+
+function renderHighScores() {
+    window.location='highscores.html';  
+}
+
+function renderPlayAgain() {
+    window.location='index.html';
+}
+
 function startQuiz(event) {
   
   clearInterval(timerInterval);
@@ -85,7 +129,6 @@ function startQuiz(event) {
   else             deleteButtons(questionsBtn);
   createButtons(questions[index].choices, questionsBtn);
   timerInterval = setInterval(function() {
-      //event.stopPropagation();???
     secondsLeft--;
     renderTimeToPage();
 
@@ -95,40 +138,6 @@ function startQuiz(event) {
 
   }, 100);
 }
-
-// function questionAnswered(event) { 
-//     //answer = findAnswer();
-//     //console.log(answer);
-    
-//     //console.log(questions[0].answer);
-    
-//     //console.log(checkAnswer(answer, questions[0].answer));
-    
-// }
-
-// function findAnswer() {
-//     //var btn = document.querySelector("#answerBtn");
-//     //console.log(btn);
-//     var element = event.target;
-//     console.log(event);
-    
-//     questionsBtn.querySelectorAll('*').forEach(function(n){
-//         console.log(n.firstChild.data === questions[0].answer)}
-//     )}
-    // for (x in questionsBtn.children) {
-    //     console.log(questionsBtn.children[x].firstChild.data === questions[0].answer);
-    //     console.log(questionsBtn.children[x].firstChild.data);
-    //     console.log(questions[0].answer);
-    //         //box2.children[x].firstChild === event.target.firstChild) 
-    //     // {
-    //     //     clearInterval(timerInterval);
-    //     //     console.log(questionsBtn.children[x].firstChild.data);            
-    //     //     return questionsBtn.children[x].firstChild.data//box2.children[x].firstChild.data;
-    //     // }
-        
-    // }
-
-
 function checkAnswer(event, arrayAnswer) {
     if (!(event.target.firstChild.data === arrayAnswer)) secondsLeft -= penalty;
     index++;
@@ -138,18 +147,65 @@ function checkAnswer(event, arrayAnswer) {
 function renderScoreInput() {
     clearInterval(timerInterval);
     deleteButtons(questionsBtn);
-    renderScore();
+    renderScorePage();
 }
 
-startButton.addEventListener("click", startQuiz);
+function saveScoreInput(initials, score) {
+    // validate the fields
+    if (initials === "") {
+        displayMessage(message, "Error: Initials cannot be blank");
+        return;
+    }
+     // create user object from submission
+    var existing = localStorage.getItem('users');
+    console.log(existing);
+    if (existing === null) 
+    {
+        var users = [{
+            initials: initials.trim(),
+            score: score.trim()
+        }];
+        localStorage.setItem("users", JSON.stringify(users));
+    } 
+    else 
+    {
+        existing = existing ? JSON.parse(existing) : {};
+        console.log(existing);
+        existing[existing.length + 1] += [{
+            initials: initials.trim(),
+            score: score.trim()
+        }];
+        console.log(existing);
+    }
+  }
+
+startButton.addEventListener("click", function() {
+    event.preventDefault();
+    index = 0; //Zero out index for next game.
+    startQuiz();
+});
 questionsBtn.addEventListener("click", function() {
     event.preventDefault();
     if (index === questions.length - 1) renderScoreInput();
     else checkAnswer(event, questions[index].answer);
 });
-questionsBtn.addEventListener("submit", function(event) {
-    //event.preventDefault();
-    console.log("hello");
-  });
-
-
+submitBox.addEventListener("click", function(event) {
+    event.preventDefault();
+    var todoText = formBox.children[0].value;
+    saveScoreInput(todoText, renderScore());
+    deleteButtons(submitBox);
+    deleteButtons(inputBox);
+    deleteText(bodyBox);
+    deleteText(titleBox);
+    deleteText(highScores);
+    var highscoresBtn = [{choices: ["Highscores"]}, {choices: ["Play Again"]}];
+    highscoresBtn.forEach(n => createButtons(n.choices, bodyBox));
+});
+formBox.addEventListener("submit", function(){
+    event.preventDefault();
+});
+bodyBox.addEventListener("click", function(event) {
+    event.preventDefault();
+    if(event.target.firstChild.data==="Play Again") renderPlayAgain();
+    else                                          renderHighScores();
+});

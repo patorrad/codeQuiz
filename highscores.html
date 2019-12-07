@@ -12,20 +12,42 @@
     <div class="container">
         <div class="row" id="nav">
             <div class="col-md-6" id="highscores">
-                <a href=""></a>
-            </div>
-            <div class="col-md-6" id="timer">
-                <h1></h1>
+                <a href="index.html">Play Game</a>
             </div>
         </div>
         <div class="row" id="box-row">
             <div class="col-md-12" id="box">
-                <h1>All Time Highscores</h1>
+                <div class="row" id="title-box">
+                    <div class="col-md-12" id="box">
+                        <h1>All Time Highscores</h1>
+                    </div>
+                </div>
+                <div class="row" id="body-box">
+                    <div class="col-md-12" id="listWinners">
+                    </div>
+                </div>
             </div>
         </div>
+        
     </div>
 
     
-    <script src="./script.js"></script>
+    <script>
+        var list = document.querySelector("#listWinners");
+        function renderLastRegistered() {
+            var user = localStorage.getItem("user");
+            console.log(user);
+            
+            //var password = localStorage.getItem("password");
+            var newEl = document.createElement("p");
+            newEl.textContent = "";
+            newEl.setAttribute("style", "font-size: 25px")
+            list.appendChild(newEl);
+            
+            // userEmailSpan.textContent = email;
+            // userPasswordSpan.textContent = password;
+        }
+        renderLastRegistered();
+    </script>
 </body>
 </html>

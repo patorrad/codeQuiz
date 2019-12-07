@@ -1,5 +1,10 @@
-h1 {
+#title-box, h1 {
     font-size: xx-large;
+}
+
+#highscores {
+    font-size: x-large;
+    text-decoration: none;
 }
 
 button {
@@ -11,7 +16,7 @@ button {
     display: inline-block;
     font-size: 16px;
     padding: 15px 32px;
-    margin: 4px 0px;
+    margin: 4px 0px 4px 4px;
     }
 
 #nav {
@@ -30,7 +35,7 @@ button {
     justify-content: center;
     margin: 10vw;
 }
-#box-row {
+#box-row, #highscores-title {
     height: auto;
     background-color: burlywood;
     display: flex;
@@ -39,12 +44,12 @@ button {
     text-align: center;
 }
 
-#body-box, #body-button, #answer-buttons, #score-input {
-    margin-top: 3vw;
-    margin-bottom: 3vw;
+#body-box, #body-button, #answer-buttons, #input-text, #submit-box {
+    margin-top: 1.5vw;
+    margin-bottom: 1.5vw;
 }
 
-#box2, #btn-box, #input-box {
+#box2, #btn-box, #form-box, #submit-box {
     display: flex;
     flex-direction: column;
 }
