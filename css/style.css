@@ -39,12 +39,12 @@ button {
     text-align: center;
 }
 
-#body-box, #body-button {
+#body-box, #body-button, #answer-buttons, #score-input {
     margin-top: 3vw;
     margin-bottom: 3vw;
 }
 
-#box2 {
+#box2, #btn-box, #input-box {
     display: flex;
     flex-direction: column;
 }
