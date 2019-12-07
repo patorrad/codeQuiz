@@ -150,33 +150,18 @@ function renderScoreInput() {
     renderScorePage();
 }
 
-function saveScoreInput(initials, score) {
+function saveScoreInput(initialsInput, scoreInput) {
     // validate the fields
-    if (initials === "") {
-        displayMessage(message, "Error: Initials cannot be blank");
-        return;
+    if (initialsInput === "") {
+        displayMessage(bodyBox, "Error: Initials cannot be blank");
+        return false;
     }
      // create user object from submission
     var existing = localStorage.getItem('users');
-    console.log(existing);
-    if (existing === null) 
-    {
-        var users = [{
-            initials: initials.trim(),
-            score: score.trim()
-        }];
-        localStorage.setItem("users", JSON.stringify(users));
-    } 
-    else 
-    {
-        existing = existing ? JSON.parse(existing) : {};
-        console.log(existing);
-        existing[existing.length + 1] += [{
-            initials: initials.trim(),
-            score: score.trim()
-        }];
-        console.log(existing);
-    }
+    existing = existing ? JSON.parse(existing) : [];
+    existing.push({initials: initialsInput.trim(), score: scoreInput.trim()});
+    localStorage.setItem("users", JSON.stringify(existing));
+    return true;
   }
 
 startButton.addEventListener("click", function() {
@@ -192,7 +177,7 @@ questionsBtn.addEventListener("click", function() {
 submitBox.addEventListener("click", function(event) {
     event.preventDefault();
     var todoText = formBox.children[0].value;
-    saveScoreInput(todoText, renderScore());
+    if (!(saveScoreInput(todoText, renderScore()))) return;
     deleteButtons(submitBox);
     deleteButtons(inputBox);
     deleteText(bodyBox);

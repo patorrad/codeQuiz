@@ -34,20 +34,25 @@
     
     <script>
         var list = document.querySelector("#listWinners");
-        function renderLastRegistered() {
-            var user = localStorage.getItem("user");
-            console.log(user);
+        function getWinners() {
+            var existing = localStorage.getItem('users');
+            return existing ? JSON.parse(existing) : [];
+        }
+        function renderWinners() {
+            var existing = getWinners();
+            for (users in existing)
+            {
+                var newEl = document.createElement("p");
+                newEl.textContent = existing[users].initials + "                " +existing[users].score;
+                newEl.setAttribute("style", "font-size: 25px; width: 50vw; background-color: white; margin: 1px; text-align: left");
+                list.appendChild(newEl);
+            }            
             
-            //var password = localStorage.getItem("password");
-            var newEl = document.createElement("p");
-            newEl.textContent = "";
-            newEl.setAttribute("style", "font-size: 25px")
-            list.appendChild(newEl);
-            
+
             // userEmailSpan.textContent = email;
             // userPasswordSpan.textContent = password;
         }
-        renderLastRegistered();
+        renderWinners();
     </script>
 </body>
 </html>
