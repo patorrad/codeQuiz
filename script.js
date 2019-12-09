@@ -1,17 +1,3 @@
-//Needs:
-//1. event listener for start button
-//2. event listerner for quiz buttons
-//3. var timer
-//4. replace time
-//5. function time with time substraction for wrong answers
-//6. function save score local history. Array.
-//7. var start button
-//8. var quiz button
-//9. var title-box
-//10. var body-box
-//11. array for questions
-//12. function to change time
-//13. function to check array?
 var highScores = document.querySelector("#highscores");
 var startButton = document.querySelector("#Start");
 var titleBox = document.querySelector("#title-box");
@@ -22,27 +8,29 @@ var questionsBtn = document.querySelector("#btn-box");
 var inputBox = document.querySelector("#input-box");
 var formBox = document.querySelector("#form-box");
 var submitBox = document.querySelector("#submit-box");
+var audioClip = document.querySelector("#my-Audio"); 
+var gifBox = document.querySelector("#gif-box");
 var questions = [
     {
-      title: "Commonly used data types DO NOT include:",
-      choices: ["strings", "booleans", "alerts", "numbers"],
-      answer: "alerts"
-    },
-    {
-      title: "The condition in an if / else statement is enclosed within ____.",
-      choices: ["quotes", "curly brackets", "parentheses", "square brackets"],
-      answer: "parentheses"
-    },
-    {
-      title: "What type of animal shirt did Joe wear on Wednesday ____.",
+      title: "What type of animal shirt did Joe wear on Wednesday?",
       choices: ["Kramer", "Huskies", "Cats", "Wookies"],
       answer: "Cats"
     },
+    {
+      title: "Whose name did Aslan forget on Friday?",
+      choices: ["Mystique", "Super Denis", "Cyclops", "Jean"],
+      answer: "Super Denis"
+    },
+    {
+      title: "What's Joe's favorite color?",
+      choices: ["Blanched Almond", "Papaya Whip", "Medium Aquamarine", "Salmon"],
+      answer: "Salmon"
+    },
 ];
 var timerInterval;
-
-var secondsLeft = 600; //100th seconds
+var secondsLeft = 500; //100th seconds
 var penalty = 100; //100th seconds
+var penaltyFlag = false; //Set this to true to include additional time penalty for wrong answer
 var index = 0; //Question Number
 renderTimeToPage();
 timer.style = "font-size: xx-large"
@@ -95,21 +83,17 @@ function createButtons (btnChoices, parent) {
 function renderScorePage() {
     titleBox.textContent = "Your score was " + renderScore();
     bodyBox.textContent = "Enter your initials";
-    var inputB = document.createElement("input");
-    inputB.textContent = "adsf";
+    var inputB = createElement("input", formBox);
     inputB.setAttribute("type", "text");
     inputB.setAttribute("placeholder", "Enter Name");
     inputB.setAttribute("id", "input-text");
-    formBox.appendChild(inputB);
-    var msg = document.createElement("p");
+    var msg = createElement("p", submitBox);
     msg.textContent = " ";
     msg.setAttribute("id", "message");
     msg.setAttribute("style", "height: 15px; width: 200px");
-    submitBox.appendChild(msg);
-    var btn = document.createElement("button"); 
+    var btn = createElement("button", submitBox); 
     btn.textContent = "Submit"; 
-    btn.setAttribute("id", "scoreInput");                
-    submitBox.appendChild(btn); 
+    btn.setAttribute("id", "scoreInput");  
     inputBox.setAttribute("style", "margin-bottom: 2vw");
 }
 
@@ -122,26 +106,25 @@ function renderPlayAgain() {
 }
 
 function startQuiz(event) {
-  
-  clearInterval(timerInterval);
-  renderQuestions();
-  if (index === 0) deleteButtons(buttons);
-  else             deleteButtons(questionsBtn);
-  createButtons(questions[index].choices, questionsBtn);
-  timerInterval = setInterval(function() {
-    secondsLeft--;
-    renderTimeToPage();
+    clearInterval(timerInterval);
+    renderQuestions();
+    if (index === 0)               deleteButtons(buttons);
+    createButtons(questions[index].choices, questionsBtn);
 
-    if(secondsLeft === 0) {
-      clearInterval(timerInterval);
-    }
+    timerInterval = setInterval(function() {
+        secondsLeft--;
+        renderTimeToPage();
 
-  }, 100);
+        if(secondsLeft === 0) {
+        clearInterval(timerInterval);
+        }
+
+    }, 100);
 }
 function checkAnswer(event, arrayAnswer) {
-    if (!(event.target.firstChild.data === arrayAnswer)) secondsLeft -= penalty;
-    index++;
-    startQuiz();
+    answer = event.target.firstChild.data === arrayAnswer;
+    if (penaltyFlag === true) secondsLeft -= penalty; //Penalty flag
+    return answer;
 }
 
 function renderScoreInput() {
@@ -164,6 +147,13 @@ function saveScoreInput(initialsInput, scoreInput) {
     return true;
   }
 
+function newmanGif() {
+    var El =createElement("iframe", gifBox);
+    El.setAttribute("src", "https://gfycat.com/ifr/PaleImmaterialConch");
+    El.setAttribute("style", "margin-bottom: 100px");
+    audioClip.play();
+}
+
 startButton.addEventListener("click", function() {
     event.preventDefault();
     index = 0; //Zero out index for next game.
@@ -171,8 +161,40 @@ startButton.addEventListener("click", function() {
 });
 questionsBtn.addEventListener("click", function() {
     event.preventDefault();
-    if (index === questions.length - 1) renderScoreInput();
-    else checkAnswer(event, questions[index].answer);
+    answer = checkAnswer(event, questions[index].answer);
+    deleteButtons(questionsBtn);
+    if (!answer && index === questions.length - 1) 
+    {
+        deleteButtons(gifBox);
+        newmanGif();
+        setTimeout(function(){ 
+            deleteButtons(gifBox);
+            renderScoreInput();
+        }, 3000);
+        return;
+    }  
+    if (!answer) 
+    {
+        deleteButtons(gifBox);
+        newmanGif();       
+        setTimeout(function(){ 
+            index++;
+            deleteButtons(gifBox);
+            startQuiz();
+        }, 3000);
+        return;
+    }
+    if (answer && index === questions.length - 1) 
+    {
+        renderScoreInput();
+        return;
+    }  
+    if (answer) 
+    {
+        index++;
+        startQuiz();
+        return;
+    }
 });
 submitBox.addEventListener("click", function(event) {
     event.preventDefault();
@@ -192,5 +214,5 @@ formBox.addEventListener("submit", function(){
 bodyBox.addEventListener("click", function(event) {
     event.preventDefault();
     if(event.target.firstChild.data==="Play Again") renderPlayAgain();
-    else                                          renderHighScores();
+    else                                           renderHighScores();
 });

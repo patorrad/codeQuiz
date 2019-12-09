@@ -22,9 +22,7 @@
                         <h1>All Time Highscores</h1>
                     </div>
                 </div>
-                <div class="row" id="body-box">
-                    <div class="col-md-12" id="listWinners">
-                    </div>
+                <div class="row" id="list-winners">
                 </div>
             </div>
         </div>
@@ -33,7 +31,7 @@
 
     
     <script>
-        var list = document.querySelector("#listWinners");
+        var list = document.querySelector("#list-winners");
         function getWinners() {
             var existing = localStorage.getItem('users');
             return existing ? JSON.parse(existing) : [];
@@ -42,10 +40,18 @@
             var existing = getWinners();
             for (users in existing)
             {
-                var newEl = document.createElement("p");
-                newEl.textContent = existing[users].initials + "                " +existing[users].score;
-                newEl.setAttribute("style", "font-size: 25px; width: 50vw; background-color: white; margin: 1px; text-align: left");
-                list.appendChild(newEl);
+                var newElName = document.createElement("div");
+                newElName.setAttribute("class", "col-m-10");
+                newElName.setAttribute("id", "scoreList");
+                newElName.textContent = existing[users].initials;
+                newElName.setAttribute("style", "font-size: 25px; background-color: white; margin: 1px; text-align: left");
+                list.appendChild(newElName);
+                var newElScore = document.createElement("div");
+                newElScore.setAttribute("class", "col-m-2");
+                newElScore.setAttribute("id", "scoreList");
+                newElScore.textContent = existing[users].score;
+                newElScore.setAttribute("style", "font-size: 25px; background-color: grey; margin: 1px; text-align: left");
+                list.appendChild(newElScore);
             }            
             
 
